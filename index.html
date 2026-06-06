@@ -1,83 +1,139 @@
-# HangOut App 🎉
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HangOut App</title>
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:#0b0f1a;color:#fff}
+.container{max-width:1000px;margin:auto;padding:20px}
+.card{background:#12182a;border:1px solid #2d3b66;border-radius:16px;padding:20px;margin:15px 0}
+h1{color:#65d6ff}
+input,select,button{padding:10px;border-radius:8px;border:none;margin:5px}
+button{cursor:pointer;background:#65d6ff}
+.tag{display:inline-block;padding:8px 12px;margin:4px;background:#1e2742;border-radius:999px;cursor:pointer}
+.tag.active{background:#65d6ff;color:#000}
+.rec{padding:12px;border:1px solid #334;border-radius:12px;margin:8px 0}
+.small{opacity:.8;font-size:.9em}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>🎉 HangOut</h1>
 
-A smart group hangout planner with real weather integration, AI-scored recommendations, and a lobby voting system.
+<div class="card">
+<h2>Profile</h2>
+<input id="name" placeholder="Name">
+<input id="age" type="number" placeholder="Age">
+<label>Budget: <span id="budgetVal">50</span></label>
+<input id="budget" type="range" min="10" max="200" value="50">
+<div>
+<span class="tag" onclick="toggleTag(this)">Chill</span>
+<span class="tag" onclick="toggleTag(this)">Adventurous</span>
+<span class="tag" onclick="toggleTag(this)">Foodie</span>
+<span class="tag" onclick="toggleTag(this)">Social</span>
+</div>
+<input id="city" placeholder="City">
+<button onclick="getLocation()">Use GPS</button>
+<div id="locationInfo" class="small"></div>
+</div>
 
-## Files
-- `index.html` — full app structure (all screens)
-- `style.css` — dark neon UI styles
-- `app.js` — all logic (profiles, sessions, recommendations, weather, maps)
+<div class="card">
+<h2>Weather</h2>
+<button onclick="loadWeather()">Get Weather</button>
+<div id="weather"></div>
+</div>
 
-## Features
+<div class="card">
+<h2>Lobby</h2>
+<button onclick="createLobby()">Create Lobby</button>
+<input id="joinCode" placeholder="Code">
+<button onclick="joinLobby()">Join</button>
+<div id="lobby"></div>
+</div>
 
-### ✅ Profile Setup (4 steps)
-- Name, age, budget slider
-- Personality tags (multi-select)
-- Likes & dislikes (cycling: love / nope / neutral)
-- City + automatic GPS location detection
+<div class="card">
+<h2>Mood Vote</h2>
+<select id="mood">
+<option>Chill</option>
+<option>Party</option>
+<option>Adventure</option>
+<option>Food</option>
+</select>
+<button onclick="recommend()">Find Hangouts</button>
+</div>
 
-### ✅ Smart Recommendations Engine
-Scores 20+ place types based on:
-- **Age** — older users get calmer venues boosted, younger get energetic ones
-- **Budget** — hard filters out over-budget places, scores cheaper ones higher
-- **Personality** — matches traits to venue personalities
-- **Likes/Dislikes** — boosts loved categories, penalizes disliked ones
-- **Mood** — your or your group's voted mood affects ranking
-- **Weather** — live weather from Open-Meteo API adjusts scores:
-  - Rainy → indoor venues rise, outdoor venues drop
-  - Hot → beach/shaded spots rise
-  - Sunny → outdoor venues get bonus
-  - Cold → cozy indoor spots rise
+<div class="card">
+<h2>Recommendations</h2>
+<div id="results"></div>
+</div>
+</div>
 
-### ✅ Session & Lobby System
-- Host generates a 6-char code (e.g. `HNG4X2`)
-- Friends enter code to join the lobby
-- Live member list with avatars
-- **Mood vote** — everyone votes their vibe, majority wins and drives recommendations
-- Simulated member join animations (replace with WebSockets/Firebase for real multiplayer)
+<script>
+let lat=null,lng=null;
 
-### ✅ Google Maps Integration
-- Map placeholder works out of the box
-- "Open in Google Maps" button searches your city for the vibe
-- Clicking any recommendation opens Google Maps search for that place
-- **To enable live embedded map:** 
-  1. Get a Google Maps API key at https://console.cloud.google.com
-  2. Enable "Maps JavaScript API"
-  3. Uncomment the `<script>` tag at the bottom of `index.html`
-  4. Replace `YOUR_API_KEY` with your actual key
-  5. Dark-styled map with markers auto-initializes
+budget.oninput=()=>budgetVal.textContent=budget.value;
 
-### ✅ Live Weather
-Uses **Open-Meteo** (free, no API key needed):
-- Auto-detects via GPS or geocodes your city
-- Shows temperature, wind, rain probability
-- Displays contextual weather advice
-- Directly influences recommendation scores
+function toggleTag(el){el.classList.toggle('active')}
 
-## How to Run
-Just open `index.html` in a browser. No build step, no npm, no framework.
+function getLocation(){
+ navigator.geolocation.getCurrentPosition(pos=>{
+  lat=pos.coords.latitude;
+  lng=pos.coords.longitude;
+  locationInfo.textContent=`GPS: ${lat.toFixed(3)}, ${lng.toFixed(3)}`;
+ },()=>alert("Location denied"));
+}
 
-```bash
-open index.html
-# or
-python3 -m http.server 8080  # then visit localhost:8080
-```
+async function loadWeather(){
+ if(lat===null){alert("Get GPS first");return;}
+ const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,wind_speed_10m`;
+ const res=await fetch(url);
+ const data=await res.json();
+ weather.innerHTML=`Temp: ${data.current.temperature_2m}°C<br>Wind: ${data.current.wind_speed_10m} km/h`;
+}
 
-## Making it Real (Next Steps)
-| Feature | Tech to Add |
-|---|---|
-| Real-time lobby | Firebase Realtime DB or Socket.io |
-| Persistent sessions | Supabase or MongoDB |
-| Real place data | Google Places API |
-| Push notifications | Firebase Cloud Messaging |
-| User accounts | Firebase Auth or Supabase Auth |
-| Backend | Node.js / Express or Next.js |
+function createLobby(){
+ const code=Math.random().toString(36).substring(2,8).toUpperCase();
+ lobby.innerHTML=`Lobby Code: <b>${code}</b>`;
+}
 
-## Google Maps API Key Setup
-1. Go to https://console.cloud.google.com
-2. Create a project → Enable "Maps JavaScript API" + "Places API"
-3. Create credentials → API Key
-4. In `index.html`, uncomment the Maps script and replace `YOUR_API_KEY`
+function joinLobby(){
+ lobby.innerHTML=`Joined Lobby: <b>${joinCode.value.toUpperCase()}</b>`;
+}
 
-## Open-Meteo (Weather)
-No key needed! Completely free, privacy-friendly weather API.
-Docs: https://open-meteo.com/en/docs
+function recommend(){
+ const age=parseInt(document.getElementById('age').value||25);
+ const budget=parseInt(document.getElementById('budget').value);
+ const mood=document.getElementById('mood').value;
+
+ const places=[
+  {name:"Coffee Shop",cost:15,type:"Chill"},
+  {name:"Escape Room",cost:40,type:"Adventure"},
+  {name:"Beach",cost:0,type:"Adventure"},
+  {name:"Restaurant",cost:60,type:"Food"},
+  {name:"Bowling",cost:35,type:"Party"},
+  {name:"Arcade",cost:25,type:"Party"},
+  {name:"Museum",cost:20,type:"Chill"}
+ ];
+
+ let scored=places.map(p=>{
+   let score=50;
+   if(p.cost<=budget) score+=20;
+   else score-=40;
+   if(p.type===mood) score+=25;
+   if(age>35 && p.type==="Chill") score+=10;
+   if(age<25 && (p.type==="Party"||p.type==="Adventure")) score+=10;
+   return {...p,score};
+ }).sort((a,b)=>b.score-a.score);
+
+ results.innerHTML=scored.map(p=>`
+ <div class="rec">
+ <b>${p.name}</b><br>
+ Score: ${p.score}<br>
+ Cost: $${p.cost}<br>
+ <a target="_blank" href="https://www.google.com/maps/search/${encodeURIComponent(p.name+' '+city.value)}">Open in Google Maps</a>
+ </div>`).join("");
+}
+</script>
+</body>
+</html>
