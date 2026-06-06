@@ -2,137 +2,253 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HangOut App</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HangOut AI</title>
 <style>
-body{margin:0;font-family:Arial,sans-serif;background:#0b0f1a;color:#fff}
-.container{max-width:1000px;margin:auto;padding:20px}
-.card{background:#12182a;border:1px solid #2d3b66;border-radius:16px;padding:20px;margin:15px 0}
-h1{color:#65d6ff}
-input,select,button{padding:10px;border-radius:8px;border:none;margin:5px}
-button{cursor:pointer;background:#65d6ff}
-.tag{display:inline-block;padding:8px 12px;margin:4px;background:#1e2742;border-radius:999px;cursor:pointer}
-.tag.active{background:#65d6ff;color:#000}
-.rec{padding:12px;border:1px solid #334;border-radius:12px;margin:8px 0}
-.small{opacity:.8;font-size:.9em}
+:root{
+--orange:#ff7a00;
+--orange2:#ffb347;
+--dark:#222;
+--light:#fff;
+--card:#fff8f2;
+}
+*{box-sizing:border-box}
+body{
+margin:0;
+font-family:Inter,Arial,sans-serif;
+background:#fff;
+color:var(--dark);
+}
+.hero{
+background:linear-gradient(135deg,var(--orange),var(--orange2));
+color:white;
+padding:60px 20px;
+text-align:center;
+}
+.hero h1{font-size:3rem;margin:0}
+.hero p{font-size:1.1rem}
+.container{max-width:1100px;margin:auto;padding:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+.card{
+background:var(--card);
+padding:20px;
+border-radius:20px;
+box-shadow:0 8px 25px rgba(0,0,0,.08);
+}
+input,select,button{
+width:100%;
+padding:12px;
+margin:8px 0;
+border-radius:12px;
+border:1px solid #ddd;
+}
+button{
+background:linear-gradient(135deg,var(--orange),var(--orange2));
+color:white;
+font-weight:bold;
+border:none;
+cursor:pointer;
+}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tag{
+padding:10px 14px;
+border-radius:999px;
+background:white;
+cursor:pointer;
+border:1px solid #ddd;
+}
+.tag.active{
+background:var(--orange);
+color:white;
+}
+.rec{
+background:white;
+padding:15px;
+border-radius:15px;
+margin:10px 0;
+border-left:6px solid var(--orange);
+}
+.bottomnav{
+position:fixed;
+bottom:0;
+left:0;
+right:0;
+background:white;
+display:flex;
+justify-content:space-around;
+padding:12px;
+box-shadow:0 -4px 15px rgba(0,0,0,.1);
+}
+.badge{
+display:inline-block;
+background:var(--orange);
+color:white;
+padding:6px 12px;
+border-radius:999px;
+margin:4px;
+}
 </style>
 </head>
 <body>
+
+<div class="hero">
+<h1>🎉 HangOut AI</h1>
+<p>Discover the perfect hangout based on your vibe, budget, weather and friends.</p>
+</div>
+
 <div class="container">
-<h1>🎉 HangOut</h1>
+
+<div class="grid">
 
 <div class="card">
-<h2>Profile</h2>
-<input id="name" placeholder="Name">
+<h2>👤 Profile</h2>
+<input id="name" placeholder="Your name">
 <input id="age" type="number" placeholder="Age">
 <label>Budget: <span id="budgetVal">50</span></label>
-<input id="budget" type="range" min="10" max="200" value="50">
-<div>
-<span class="tag" onclick="toggleTag(this)">Chill</span>
-<span class="tag" onclick="toggleTag(this)">Adventurous</span>
-<span class="tag" onclick="toggleTag(this)">Foodie</span>
-<span class="tag" onclick="toggleTag(this)">Social</span>
+<input id="budget" type="range" min="10" max="300" value="50">
+
+<h3>Your Vibe</h3>
+<div class="tags">
+<div class="tag" onclick="toggleTag(this)">Foodie</div>
+<div class="tag" onclick="toggleTag(this)">Adventure</div>
+<div class="tag" onclick="toggleTag(this)">Party</div>
+<div class="tag" onclick="toggleTag(this)">Coffee</div>
+<div class="tag" onclick="toggleTag(this)">Music</div>
+<div class="tag" onclick="toggleTag(this)">Fitness</div>
+<div class="tag" onclick="toggleTag(this)">Travel</div>
+<div class="tag" onclick="toggleTag(this)">Movies</div>
 </div>
+
 <input id="city" placeholder="City">
-<button onclick="getLocation()">Use GPS</button>
-<div id="locationInfo" class="small"></div>
+<button onclick="getLocation()">📍 Use GPS</button>
+<div id="gps"></div>
 </div>
 
 <div class="card">
-<h2>Weather</h2>
-<button onclick="loadWeather()">Get Weather</button>
+<h2>🌤 Weather</h2>
+<button onclick="loadWeather()">Get Live Weather</button>
 <div id="weather"></div>
 </div>
 
 <div class="card">
-<h2>Lobby</h2>
+<h2>👥 Lobby</h2>
 <button onclick="createLobby()">Create Lobby</button>
-<input id="joinCode" placeholder="Code">
-<button onclick="joinLobby()">Join</button>
+<input id="joinCode" placeholder="Enter code">
+<button onclick="joinLobby()">Join Lobby</button>
 <div id="lobby"></div>
 </div>
 
 <div class="card">
-<h2>Mood Vote</h2>
+<h2>🎭 Mood Vote</h2>
 <select id="mood">
-<option>Chill</option>
 <option>Party</option>
+<option>Chill</option>
 <option>Adventure</option>
 <option>Food</option>
+<option>Beach</option>
+<option>Shopping</option>
+<option>Movies</option>
+<option>Music</option>
 </select>
-<button onclick="recommend()">Find Hangouts</button>
+<button onclick="recommend()">Find Places</button>
+</div>
+
 </div>
 
 <div class="card">
-<h2>Recommendations</h2>
+<h2>🏆 Recommendations</h2>
 <div id="results"></div>
 </div>
+
+<div class="card">
+<h2>🏅 Achievements</h2>
+<span class="badge">Organizer</span>
+<span class="badge">Food Explorer</span>
+<span class="badge">Party Master</span>
+<span class="badge">Adventure Pro</span>
+</div>
+
+</div>
+
+<div class="bottomnav">
+<div>🏠 Home</div>
+<div>🔍 Explore</div>
+<div>🗺 Map</div>
+<div>👥 Friends</div>
+<div>👤 Profile</div>
 </div>
 
 <script>
 let lat=null,lng=null;
 
-budget.oninput=()=>budgetVal.textContent=budget.value;
+budget.oninput=()=>budgetVal.innerText=budget.value;
 
-function toggleTag(el){el.classList.toggle('active')}
+function toggleTag(el){
+el.classList.toggle("active");
+}
 
 function getLocation(){
- navigator.geolocation.getCurrentPosition(pos=>{
-  lat=pos.coords.latitude;
-  lng=pos.coords.longitude;
-  locationInfo.textContent=`GPS: ${lat.toFixed(3)}, ${lng.toFixed(3)}`;
- },()=>alert("Location denied"));
+navigator.geolocation.getCurrentPosition(pos=>{
+lat=pos.coords.latitude;
+lng=pos.coords.longitude;
+gps.innerHTML=`Location: ${lat.toFixed(3)}, ${lng.toFixed(3)}`;
+});
 }
 
 async function loadWeather(){
- if(lat===null){alert("Get GPS first");return;}
- const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,wind_speed_10m`;
- const res=await fetch(url);
- const data=await res.json();
- weather.innerHTML=`Temp: ${data.current.temperature_2m}°C<br>Wind: ${data.current.wind_speed_10m} km/h`;
+if(lat===null){alert("Enable GPS first");return;}
+const res=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m`);
+const data=await res.json();
+weather.innerHTML=`🌡 Temperature: ${data.current.temperature_2m}°C`;
 }
 
 function createLobby(){
- const code=Math.random().toString(36).substring(2,8).toUpperCase();
- lobby.innerHTML=`Lobby Code: <b>${code}</b>`;
+const code=Math.random().toString(36).substring(2,8).toUpperCase();
+lobby.innerHTML=`Lobby Code: <b>${code}</b>`;
 }
 
 function joinLobby(){
- lobby.innerHTML=`Joined Lobby: <b>${joinCode.value.toUpperCase()}</b>`;
+lobby.innerHTML=`Joined: <b>${joinCode.value.toUpperCase()}</b>`;
 }
 
 function recommend(){
- const age=parseInt(document.getElementById('age').value||25);
- const budget=parseInt(document.getElementById('budget').value);
- const mood=document.getElementById('mood').value;
 
- const places=[
-  {name:"Coffee Shop",cost:15,type:"Chill"},
-  {name:"Escape Room",cost:40,type:"Adventure"},
-  {name:"Beach",cost:0,type:"Adventure"},
-  {name:"Restaurant",cost:60,type:"Food"},
-  {name:"Bowling",cost:35,type:"Party"},
-  {name:"Arcade",cost:25,type:"Party"},
-  {name:"Museum",cost:20,type:"Chill"}
- ];
+const age=parseInt(document.getElementById("age").value||25);
+const budgetValNum=parseInt(document.getElementById("budget").value);
+const mood=document.getElementById("mood").value;
 
- let scored=places.map(p=>{
-   let score=50;
-   if(p.cost<=budget) score+=20;
-   else score-=40;
-   if(p.type===mood) score+=25;
-   if(age>35 && p.type==="Chill") score+=10;
-   if(age<25 && (p.type==="Party"||p.type==="Adventure")) score+=10;
-   return {...p,score};
- }).sort((a,b)=>b.score-a.score);
+const venues=[
+["Rooftop Bar",70,"Party"],
+["Beach Club",20,"Beach"],
+["Cinema",25,"Movies"],
+["Bowling",30,"Party"],
+["Museum",15,"Chill"],
+["Escape Room",40,"Adventure"],
+["Shopping Mall",50,"Shopping"],
+["Coffee Shop",10,"Chill"],
+["Live Music Venue",45,"Music"],
+["Food Market",25,"Food"],
+["Arcade",20,"Party"],
+["Hiking Trail",0,"Adventure"]
+];
 
- results.innerHTML=scored.map(p=>`
- <div class="rec">
- <b>${p.name}</b><br>
- Score: ${p.score}<br>
- Cost: $${p.cost}<br>
- <a target="_blank" href="https://www.google.com/maps/search/${encodeURIComponent(p.name+' '+city.value)}">Open in Google Maps</a>
- </div>`).join("");
+let results=venues.map(v=>{
+let score=50;
+if(v[1]<=budgetValNum) score+=20;
+if(v[2]===mood) score+=30;
+if(age<25 && (v[2]==="Party"||v[2]==="Adventure")) score+=10;
+if(age>35 && v[2]==="Chill") score+=10;
+return {...{name:v[0],cost:v[1],type:v[2]},score};
+}).sort((a,b)=>b.score-a.score);
+
+document.getElementById("results").innerHTML=results.map(r=>`
+<div class="rec">
+<h3>${r.name}</h3>
+<p>⭐ Match Score: ${r.score}%</p>
+<p>💰 Budget: $${r.cost}</p>
+<p>🎯 Category: ${r.type}</p>
+<a target="_blank" href="https://www.google.com/maps/search/${encodeURIComponent(r.name+' '+city.value)}">Open in Google Maps</a>
+</div>`).join("");
 }
 </script>
 </body>
