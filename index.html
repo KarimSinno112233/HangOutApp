@@ -1,0 +1,83 @@
+# HangOut App 🎉
+
+A smart group hangout planner with real weather integration, AI-scored recommendations, and a lobby voting system.
+
+## Files
+- `index.html` — full app structure (all screens)
+- `style.css` — dark neon UI styles
+- `app.js` — all logic (profiles, sessions, recommendations, weather, maps)
+
+## Features
+
+### ✅ Profile Setup (4 steps)
+- Name, age, budget slider
+- Personality tags (multi-select)
+- Likes & dislikes (cycling: love / nope / neutral)
+- City + automatic GPS location detection
+
+### ✅ Smart Recommendations Engine
+Scores 20+ place types based on:
+- **Age** — older users get calmer venues boosted, younger get energetic ones
+- **Budget** — hard filters out over-budget places, scores cheaper ones higher
+- **Personality** — matches traits to venue personalities
+- **Likes/Dislikes** — boosts loved categories, penalizes disliked ones
+- **Mood** — your or your group's voted mood affects ranking
+- **Weather** — live weather from Open-Meteo API adjusts scores:
+  - Rainy → indoor venues rise, outdoor venues drop
+  - Hot → beach/shaded spots rise
+  - Sunny → outdoor venues get bonus
+  - Cold → cozy indoor spots rise
+
+### ✅ Session & Lobby System
+- Host generates a 6-char code (e.g. `HNG4X2`)
+- Friends enter code to join the lobby
+- Live member list with avatars
+- **Mood vote** — everyone votes their vibe, majority wins and drives recommendations
+- Simulated member join animations (replace with WebSockets/Firebase for real multiplayer)
+
+### ✅ Google Maps Integration
+- Map placeholder works out of the box
+- "Open in Google Maps" button searches your city for the vibe
+- Clicking any recommendation opens Google Maps search for that place
+- **To enable live embedded map:** 
+  1. Get a Google Maps API key at https://console.cloud.google.com
+  2. Enable "Maps JavaScript API"
+  3. Uncomment the `<script>` tag at the bottom of `index.html`
+  4. Replace `YOUR_API_KEY` with your actual key
+  5. Dark-styled map with markers auto-initializes
+
+### ✅ Live Weather
+Uses **Open-Meteo** (free, no API key needed):
+- Auto-detects via GPS or geocodes your city
+- Shows temperature, wind, rain probability
+- Displays contextual weather advice
+- Directly influences recommendation scores
+
+## How to Run
+Just open `index.html` in a browser. No build step, no npm, no framework.
+
+```bash
+open index.html
+# or
+python3 -m http.server 8080  # then visit localhost:8080
+```
+
+## Making it Real (Next Steps)
+| Feature | Tech to Add |
+|---|---|
+| Real-time lobby | Firebase Realtime DB or Socket.io |
+| Persistent sessions | Supabase or MongoDB |
+| Real place data | Google Places API |
+| Push notifications | Firebase Cloud Messaging |
+| User accounts | Firebase Auth or Supabase Auth |
+| Backend | Node.js / Express or Next.js |
+
+## Google Maps API Key Setup
+1. Go to https://console.cloud.google.com
+2. Create a project → Enable "Maps JavaScript API" + "Places API"
+3. Create credentials → API Key
+4. In `index.html`, uncomment the Maps script and replace `YOUR_API_KEY`
+
+## Open-Meteo (Weather)
+No key needed! Completely free, privacy-friendly weather API.
+Docs: https://open-meteo.com/en/docs
